@@ -1,6 +1,7 @@
 import { toBaseMessages, toUIMessageStream } from "@ai-sdk/langchain";
 import { createUIMessageStreamResponse, type UIMessage } from "ai";
 import { agent } from "@/agent/deepAgent";
+import { injectQuoteContext } from "@assistant-ui/react-ai-sdk";
 
 import dotenv from "dotenv";
 
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
 
   // Convert AI SDK UIMessages to LangChain messages
   const langchainBaseMessages = await toBaseMessages(
-    getTextOnlyMessages(messages),
+    getTextOnlyMessages(injectQuoteContext(messages)),
   );
 
   const config = { configurable: { thread_id: messages[0].id } };
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     {
       messages: langchainBaseMessages,
     },
-    config,
+    { ...config, version: "v2" },
   );
 
   return createUIMessageStreamResponse({

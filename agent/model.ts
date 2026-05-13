@@ -9,8 +9,8 @@ import { ChatOpenAI } from "@langchain/openai";
 //   },
 //   temperature: 0,
 //   maxTokens: 8192,
-//   reasoning: {
-//     effort: "xhigh",
+//   modelKwargs: {
+//     reasoning_effort: "high",
 //   },
 // });
 
@@ -21,8 +21,15 @@ export const model = new ChatOpenAI({
     baseURL: "https://api.minimax.io/v1",
   },
   temperature: 0,
-  maxTokens: 64000,
-  modelKwargs: {
-    reasoning_split: true,
-  },
+  maxTokens: 8192,
 });
+
+// export const model = new ChatOpenAI({
+//   model: "gpt-5.4",
+//   apiKey: process.env.OPENAI_API_KEY,
+//   maxTokens: 64000,
+//   reasoning: {
+//     effort: "medium",
+//     summary: "auto",
+//   },
+// });

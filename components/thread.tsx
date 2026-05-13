@@ -4,6 +4,8 @@ import {
   UserMessageAttachments,
 } from "@/components/attachment";
 import { MarkdownText } from "@/components/markdown-text";
+import { Sources } from "@/components/sources";
+import { QuoteBlock, SelectionToolbar, ComposerQuotePreview } from "@/components/quote";
 import {
   Reasoning,
   ReasoningContent,
@@ -82,6 +84,7 @@ export const Thread: FC = () => {
           </ThreadPrimitive.ViewportFooter>
         </div>
       </ThreadPrimitive.Viewport>
+      <SelectionToolbar />
     </ThreadPrimitive.Root>
   );
 };
@@ -167,6 +170,7 @@ const ThreadSuggestionItem: FC = () => {
 const Composer: FC = () => {
   return (
     <ComposerPrimitive.Root className="aui-composer-root relative flex w-full flex-col">
+      <ComposerQuotePreview />
       <ComposerPrimitive.AttachmentDropzone asChild>
         <div
           data-slot="aui_composer-shell"
@@ -266,7 +270,7 @@ const AssistantMessage: FC = () => {
               case "group-reasoning": {
                 const running = part.status.type === "running";
                 return (
-                  <ReasoningRoot defaultOpen={running}>
+                  <ReasoningRoot variant="ghost" defaultOpen={running}>
                     <ReasoningTrigger active={running} />
                     <ReasoningContent aria-busy={running}>
                       <ReasoningText>{children}</ReasoningText>
@@ -276,7 +280,7 @@ const AssistantMessage: FC = () => {
               }
               case "group-tool":
                 return (
-                  <ToolGroupRoot>
+                  <ToolGroupRoot variant="ghost">
                     <ToolGroupTrigger
                       count={part.indices.length}
                       active={part.status.type === "running"}
@@ -290,6 +294,8 @@ const AssistantMessage: FC = () => {
                 return <Reasoning {...part} />;
               case "tool-call":
                 return part.toolUI ?? <ToolFallback {...part} />;
+              case "source":
+                return <Sources {...part} />;
               default:
                 return null;
             }
@@ -367,6 +373,9 @@ const UserMessage: FC = () => {
       <UserMessageAttachments />
 
       <div className="aui-user-message-content-wrapper relative col-start-2 min-w-0">
+        <MessagePrimitive.Quote>
+          {(quote) => <QuoteBlock {...quote} />}
+        </MessagePrimitive.Quote>
         <div className="aui-user-message-content wrap-break-word peer rounded-2xl bg-muted px-4 py-2.5 text-foreground empty:hidden">
           <MessagePrimitive.Parts />
         </div>
