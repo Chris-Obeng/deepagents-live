@@ -84,7 +84,6 @@ export default function RootLayout({
     >
       <body className="h-full flex flex-col">
         <ClerkProvider>
-          <Header />
           {children}
         </ClerkProvider>
       </body>

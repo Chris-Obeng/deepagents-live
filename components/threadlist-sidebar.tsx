@@ -1,5 +1,5 @@
 import type * as React from "react";
-import { MessagesSquare } from "lucide-react";
+import { Sparkles, LogIn } from "lucide-react";
 import { GitHubIcon } from "@/components/github";
 import {
   Sidebar,
@@ -12,6 +12,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { ThreadList } from "@/components/thread-list";
+import { Show, UserButton, SignInButton } from "@clerk/nextjs";
 
 export function ThreadListSidebar({
   ...props
@@ -23,20 +24,16 @@ export function ThreadListSidebar({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild>
-                <a
-                  href="https://assistant-ui.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div className="aui-sidebar-header-icon-wrapper flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <MessagesSquare className="aui-sidebar-header-icon size-4" />
+                <div className="cursor-pointer">
+                  <div className="aui-sidebar-header-icon-wrapper flex aspect-square size-8 items-center justify-center rounded-lg bg-black text-white">
+                    <Sparkles className="aui-sidebar-header-icon size-4" />
                   </div>
                   <div className="aui-sidebar-header-heading me-6 flex flex-col gap-0.5 leading-none">
-                    <span className="aui-sidebar-header-title font-semibold">
-                      assistant-ui
+                    <span className="aui-sidebar-header-title font-semibold tracking-tight text-lg">
+                      DeepAgent
                     </span>
                   </div>
-                </a>
+                </div>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -46,27 +43,31 @@ export function ThreadListSidebar({
         <ThreadList />
       </SidebarContent>
       <SidebarRail />
-      <SidebarFooter className="aui-sidebar-footer border-t">
+      <SidebarFooter className="aui-sidebar-footer border-t p-2">
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a
-                href="https://github.com/assistant-ui/assistant-ui"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="aui-sidebar-footer-icon-wrapper flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GitHubIcon className="aui-sidebar-footer-icon size-4" />
-                </div>
-                <div className="aui-sidebar-footer-heading flex flex-col gap-0.5 leading-none">
-                  <span className="aui-sidebar-footer-title font-semibold">
-                    GitHub
-                  </span>
-                  <span>View Source</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <Show when="signed-in">
+            <SidebarMenuItem className="mb-1">
+              <div className="flex items-center gap-2 px-2 py-1.5 w-full hover:bg-sidebar-accent rounded-md">
+                <UserButton showName />
+              </div>
+            </SidebarMenuItem>
+          </Show>
+          <Show when="signed-out">
+            <SidebarMenuItem className="mb-1">
+              <SignInButton mode="modal">
+                <SidebarMenuButton size="lg" className="cursor-pointer">
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    <LogIn className="size-4" />
+                  </div>
+                  <div className="flex flex-col gap-0.5 leading-none">
+                    <span className="font-semibold">Sign In</span>
+                    <span className="text-xs text-muted-foreground">Log in to your account</span>
+                  </div>
+                </SidebarMenuButton>
+              </SignInButton>
+            </SidebarMenuItem>
+          </Show>
+          
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

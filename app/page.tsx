@@ -2,6 +2,7 @@
 
 import { Thread } from "@/components/thread";
 import { ThreadListSidebar } from "@/components/threadlist-sidebar";
+import Header from "@/components/custom/header";
 import { 
   AssistantRuntimeProvider, 
   CompositeAttachmentAdapter, 
@@ -16,7 +17,6 @@ import {
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -37,10 +37,10 @@ export default function Home() {
     <TooltipProvider>
       <AssistantRuntimeProvider runtime={runtime}>
         <SidebarProvider defaultOpen={false}>
-          <div className="flex h-dvh w-full">
+          <div className="flex h-screen w-full overflow-hidden">
             <ThreadListSidebar />
-            <SidebarInset>
-              <SidebarTrigger className="absolute top-4 left-4 z-20" />
+            <SidebarInset className="flex flex-col h-full overflow-hidden relative">
+              <Header />
               <Thread />
             </SidebarInset>
           </div>
