@@ -43,12 +43,31 @@ export function ThreadListSidebar({
         <ThreadList />
       </SidebarContent>
       <SidebarRail />
-      <SidebarFooter className="aui-sidebar-footer border-t p-2">
+      <SidebarFooter className="aui-sidebar-footer border-t p-1">
         <SidebarMenu>
           <Show when="signed-in">
-            <SidebarMenuItem className="mb-1">
-              <div className="flex items-center gap-2 px-2 py-1.5 w-full hover:bg-sidebar-accent rounded-md">
-                <UserButton showName />
+            <SidebarMenuItem>
+              <div className="flex items-center p-1 w-full hover:bg-sidebar-accent rounded-md">
+                <UserButton 
+                  showName 
+                  appearance={{
+                    elements: {
+                      userButtonBox: "flex flex-row w-full justify-start items-center",
+                      userButtonOuterIdentifier: {
+                        order: 2,
+                        fontSize: "1rem",
+                        fontWeight: "500",
+                        // marginLeft: "0.2rem", // Reduces gap between avatar and name
+                      },
+                      userButtonAvatarBox: {
+                        order: 1,
+                        marginLeft: "0.26rem", // Adds a little left margin to the avatar
+                        width: "2.5rem",   
+                        height: "2.5rem",  
+                      }
+                    }
+                  }}
+                />
               </div>
             </SidebarMenuItem>
           </Show>
@@ -67,7 +86,6 @@ export function ThreadListSidebar({
               </SignInButton>
             </SidebarMenuItem>
           </Show>
-          
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
