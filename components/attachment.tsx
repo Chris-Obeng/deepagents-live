@@ -191,6 +191,56 @@ export const UserMessageAttachments: FC = () => {
       <MessagePrimitive.Attachments>
         {() => <AttachmentUI />}
       </MessagePrimitive.Attachments>
+      <MessagePrimitive.Parts>
+        {({ part }) => {
+          if (part.type === "text" && part.text.includes("<attachment")) {
+            const nameMatch = part.text.match(/name="([^"]+)"/);
+            const typeMatch = part.text.match(/type="([^"]+)"/);
+            const contentMatch = part.text.match(/>([\s\S]*?)<\/attachment>/);
+            
+            if (!contentMatch && !nameMatch) return null;
+            
+            const name = nameMatch ? nameMatch[1] : "File";
+            const type = typeMatch ? typeMatch[1] : "";
+            const content = contentMatch ? contentMatch[1].trim() : "";
+            
+            const isImage = type.startsWith("image/") || content.startsWith("data:image/");
+            
+            return (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div
+                    className="aui-attachment-tile size-14 cursor-pointer overflow-hidden rounded-[calc(var(--composer-radius)-var(--composer-padding))] border bg-muted flex flex-col items-center justify-center relative transition-opacity hover:opacity-75"
+                    title={name}
+                  >
+                    {isImage && content ? (
+                      <img src={content} alt={name} className="h-full w-full object-cover" />
+                    ) : (
+                      <>
+                        <FileText className="size-6 text-muted-foreground" />
+                        <span className="w-full truncate px-1 text-center text-[10px] absolute bottom-1 text-muted-foreground bg-background/50">
+                          {name}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </DialogTrigger>
+                {isImage && content && (
+                  <DialogContent className="aui-attachment-preview-dialog-content p-2 sm:max-w-3xl [&>button]:rounded-full [&>button]:bg-foreground/60 [&>button]:p-1 [&>button]:opacity-100 [&>button]:ring-0! [&_svg]:text-background [&>button]:hover:[&_svg]:text-destructive">
+                    <DialogTitle className="aui-sr-only sr-only">
+                      Image Attachment Preview
+                    </DialogTitle>
+                    <div className="aui-attachment-preview relative mx-auto flex max-h-[80dvh] w-full items-center justify-center overflow-hidden bg-background">
+                      <img src={content} alt={name} className="block h-auto max-h-[80vh] w-auto max-w-full object-contain" />
+                    </div>
+                  </DialogContent>
+                )}
+              </Dialog>
+            );
+          }
+          return null;
+        }}
+      </MessagePrimitive.Parts>
     </div>
   );
 };

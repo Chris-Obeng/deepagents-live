@@ -46,6 +46,8 @@ import {
   PencilIcon,
   RefreshCwIcon,
   SquareIcon,
+  Volume2Icon,
+  VolumeXIcon,
 } from "lucide-react";
 import type { FC } from "react";
 
@@ -238,21 +240,15 @@ const MessageError: FC = () => {
 };
 
 const AssistantMessage: FC = () => {
-  // reserves space for action bar and compensates with `-mb` for consistent msg spacing
-  // keeps hovered action bar from shifting layout (autohide doesn't support absolute positioning well)
-  // for pt-[n] use -mb-[n + 6] & min-h-[n + 6] to preserve compensation
-  const ACTION_BAR_PT = "pt-1.5";
-  const ACTION_BAR_HEIGHT = `-mb-7.5 min-h-7.5 ${ACTION_BAR_PT}`;
-
   return (
     <MessagePrimitive.Root
       data-slot="aui_assistant-message-root"
       data-role="assistant"
-      className="fade-in slide-in-from-bottom-1 relative animate-in duration-150 [contain-intrinsic-size:auto_300px] [content-visibility:auto]"
+      className="fade-in slide-in-from-bottom-1 group relative animate-in duration-150 pl-2 mb-4"
     >
       <div
         data-slot="aui_assistant-message-content"
-        className="wrap-break-word px-2 text-foreground leading-relaxed"
+        className="wrap-break-word text-foreground leading-relaxed"
       >
         <MessagePrimitive.GroupedParts
           groupBy={(part) => {
@@ -306,7 +302,7 @@ const AssistantMessage: FC = () => {
 
       <div
         data-slot="aui_assistant-message-footer"
-        className={cn("ms-2 flex items-center", ACTION_BAR_HEIGHT)}
+        className="flex items-center overflow-visible relative z-30 mt-2 min-h-8"
       >
         <BranchPicker />
         <AssistantActionBar />
@@ -320,7 +316,7 @@ const AssistantActionBar: FC = () => {
     <ActionBarPrimitive.Root
       hideWhenRunning
       autohide="not-last"
-      className="aui-assistant-action-bar-root col-start-3 row-start-2 -ms-1 flex gap-1 text-muted-foreground"
+      className="aui-assistant-action-bar-root relative z-40 -ms-1 flex items-center gap-1 text-muted-foreground opacity-100 data-[disabled]:invisible"
     >
       <ActionBarPrimitive.Copy asChild>
         <TooltipIconButton tooltip="Copy">
@@ -337,6 +333,20 @@ const AssistantActionBar: FC = () => {
           <RefreshCwIcon />
         </TooltipIconButton>
       </ActionBarPrimitive.Reload>
+      <AuiIf condition={(s) => s.message.speech == null}>
+        <ActionBarPrimitive.Speak asChild>
+          <TooltipIconButton tooltip="Speak">
+            <Volume2Icon />
+          </TooltipIconButton>
+        </ActionBarPrimitive.Speak>
+      </AuiIf>
+      <AuiIf condition={(s) => s.message.speech != null}>
+        <ActionBarPrimitive.StopSpeaking asChild>
+          <TooltipIconButton tooltip="Stop speaking">
+            <VolumeXIcon />
+          </TooltipIconButton>
+        </ActionBarPrimitive.StopSpeaking>
+      </AuiIf>
       <ActionBarMorePrimitive.Root>
         <ActionBarMorePrimitive.Trigger asChild>
           <TooltipIconButton
@@ -377,7 +387,28 @@ const UserMessage: FC = () => {
           {(quote) => <QuoteBlock {...quote} />}
         </MessagePrimitive.Quote>
         <div className="aui-user-message-content wrap-break-word peer rounded-2xl bg-muted px-4 py-2.5 text-foreground empty:hidden">
-          <MessagePrimitive.Parts />
+          <MessagePrimitive.GroupedParts
+            groupBy={(part) => {
+              // Hide attachment XML blocks from the UI
+              if (
+                part.type === "text" &&
+                part.text.startsWith("<attachment name=")
+              ) {
+                return "group-hidden";
+              }
+              return null;
+            }}
+          >
+            {({ part, children }) => {
+              if (part.type === "group-hidden") {
+                return null;
+              }
+              if (part.type === "text") {
+                return <MarkdownText />;
+              }
+              return children;
+            }}
+          </MessagePrimitive.GroupedParts>
         </div>
         <div className="aui-user-action-bar-wrapper absolute start-0 top-1/2 -translate-x-full -translate-y-1/2 pe-2 peer-empty:hidden rtl:translate-x-full">
           <UserActionBar />
