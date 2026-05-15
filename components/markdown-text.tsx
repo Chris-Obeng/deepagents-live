@@ -13,6 +13,7 @@ import { type FC, memo, useState } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
 
 import { TooltipIconButton } from "@/components/tooltip-icon-button";
+import { RichLinkPreview } from "@/components/custom/rich-link-preview";
 import { cn } from "@/lib/utils";
 
 const MarkdownTextImpl = () => {
@@ -130,15 +131,14 @@ const defaultComponents = memoizeMarkdownComponents({
       {...props}
     />
   ),
-  a: ({ className, ...props }) => (
-    <a
-      className={cn(
-        "aui-md-a text-primary underline underline-offset-2 hover:text-primary/80",
-        className,
-      )}
-      {...props}
-    />
-  ),
+  a: ({ className, href, children, ...props }) => {
+    if (!href) return <a className={className} {...props}>{children}</a>;
+    return (
+      <RichLinkPreview href={href} className={className} {...props}>
+        {children}
+      </RichLinkPreview>
+    );
+  },
   blockquote: ({ className, ...props }) => (
     <blockquote
       className={cn(

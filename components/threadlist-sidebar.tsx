@@ -57,13 +57,13 @@ export function ThreadListSidebar({
                         order: 2,
                         fontSize: "1rem",
                         fontWeight: "500",
-                        // marginLeft: "0.2rem", // Reduces gap between avatar and name
+                        marginLeft: "-0.3rem", // Reduces gap between avatar and name
                       },
                       userButtonAvatarBox: {
                         order: 1,
                         marginLeft: "0.26rem", // Adds a little left margin to the avatar
-                        width: "2.5rem",   
-                        height: "2.5rem",  
+                        width: "2rem",   
+                        height: "2rem",  
                       }
                     }
                   }}
