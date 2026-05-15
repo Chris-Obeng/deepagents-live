@@ -15,6 +15,18 @@ export async function POST(request: Request) {
     injectQuoteContext(messages),
   );
 
+  // Sanitize tool calls to ensure args exists
+  langchainBaseMessages.forEach((m: any) => {
+    if (m.tool_calls && Array.isArray(m.tool_calls)) {
+      m.tool_calls.forEach((tc: any) => {
+        if (!tc.args) {
+          tc.args = {};
+        }
+      });
+    }
+  });
+
+  console.log(langchainBaseMessages);
   const config = { configurable: { thread_id: messages[0].id } };
   console.log("config", config);
   const streamEvents = agent.streamEvents(
